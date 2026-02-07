@@ -1,0 +1,55 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+myenv/
+env/
+ENV/
+
+# VS Code
+.vscode/
+
+# Python environment system folders
+DLLs/
+Lib/
+libs/
+Scripts/
+include/
+tcl/
+Tools/
+
+# Python runtime files
+python*.dll
+vcruntime*.dll
+
+# Database files
+*.db
+*.sqlite3
+
+# Model checkpoints
+*.h5
+*.pt
+*.pth
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+
+# Secrets
+.env
+
+nul
+python.exe
+pythonw.exe

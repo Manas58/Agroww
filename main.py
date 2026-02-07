@@ -101,6 +101,7 @@ def predict_fertilizer():
             nitro = float(data['nitrogen'])
             pota = float(data['potassium'])
             phosp = float(data['phosphorous'])
+            print(f"Parsed input: {temp}, {humi}, {soil}, {crop}, {nitro}, {pota}, {phosp}")
         except ValueError as e:
             print(f"Value conversion error: {e}")
             return jsonify(success=False, message="Invalid input types"), 400
@@ -118,8 +119,13 @@ def predict_fertilizer():
         soil_index = soil_types.index(soil)
         crop_index = crop_types.index(crop)
 
-        input_data = [int(temp), int(humi), soil_index, crop_index, int(nitro), int(pota), int(phosp)]
+        # Add the missing feature here
+        additional_feature = 1  # Example: you might need a constant value or another feature
+        input_data = [int(temp), int(humi), soil_index, crop_index, int(nitro), int(pota), int(phosp), additional_feature]
         print(f"Prepared input for prediction: {input_data}")
+
+        # Log expected features
+        print(f"Model expects {model.n_features_in_} features.")
 
         try:
             predicted_fertilizer = ferti.classes_[model.predict([input_data])[0]]

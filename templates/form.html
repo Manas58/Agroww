@@ -52,6 +52,7 @@
         <button type="button" onclick="predict()">Explore</button>
     </form>
     <div id="result"></div>
+    <div id="loading" style="display:none;">Loading...</div> <!-- Loading indicator -->
 
     <script>
         function predict() {
@@ -66,6 +67,9 @@
                 phosphorous: document.getElementById("phosphorous").value
             };
 
+            document.getElementById("result").innerText = ''; // Clear previous results
+            document.getElementById("loading").style.display = 'block'; // Show loading indicator
+
             fetch('http://127.0.0.1:5000/predict', {
                 method: 'POST',
                 headers: {
@@ -73,7 +77,13 @@
                 },
                 body: JSON.stringify(formData),
             })
-            .then(response => response.json())
+            .then(response => {
+                document.getElementById("loading").style.display = 'none'; // Hide loading indicator
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 const resultDiv = document.getElementById("result");
                 if (data.success) {
@@ -83,6 +93,7 @@
                 }
             })
             .catch(error => {
+                document.getElementById("loading").style.display = 'none'; // Hide loading indicator
                 document.getElementById("result").innerText = 'Error: ' + error.message;
             });
         }

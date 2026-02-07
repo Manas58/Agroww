@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Python Integration</title>
+</head>
+<body>
+    <h1>Python Integration Demo</h1>
+    <button onclick="callPythonGet()">GET Request</button>
+    <button onclick="callPythonPost()">POST Request</button>
+    <div id="result"></div>
+
+    <script>
+        // GET request
+        function callPythonGet() {
+            fetch('http://localhost:5000/api/calculate', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    `GET Response:<br>
+                     Message: ${data.message}<br>
+                     Calculation: ${data.calculation}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // POST request
+        function callPythonPost() {
+            fetch('http://localhost:5000/api/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    test: 'Hello from JavaScript!'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    `POST Response:<br>
+                     Message: ${data.message}<br>
+                     Received Data: ${JSON.stringify(data.received_data)}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
