@@ -53,3 +53,6 @@ Thumbs.db
 nul
 python.exe
 pythonw.exe
+
+assets/video/
+*.mp4
