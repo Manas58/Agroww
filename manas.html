@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 200px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .weather-input {
+            margin-top: 10px;
+            padding: 10px;
+            width: 200px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Weather Forecast</h1>
+    <form id="weatherForm">
+        <label for="city">Enter City:</label>
+        <input type="text" id="city" name="city" placeholder="City Name" required>
+        <input type="submit" value="Get Weather">
+    </form>
+
+    <div id="result">
+        <label for="temperature">Temperature (°C):</label>
+        <input type="text" id="temperature" class="weather-input" readonly><br>
+
+        <label for="humidity">Humidity (%):</label>
+        <input type="text" id="humidity" class="weather-input" readonly>
+    </div>
+
+    <script>
+        const form = document.getElementById('weatherForm');
+        const tempInput = document.getElementById('temperature');
+        const humidityInput = document.getElementById('humidity');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = document.getElementById('city').value;
+            getWeather(city);
+        });
+
+        async function getWeather(city) {
+            const apiKey = 'fdfad914d777f9b0a23e4dac14748801'; // Your API key
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+
+                const data = await response.json();
+                const temperature = data.main.temp;
+                const humidity = data.main.humidity;
+
+                // Populate the input fields with the weather data
+                tempInput.value = temperature;
+                humidityInput.value = humidity;
+
+            } catch (error) {
+                alert(error.message);
+                tempInput.value = '';  // Clear the input field on error
+                humidityInput.value = '';  // Clear the input field on error
+            }
+        }
+    </script>
+
+</body>
+</html>

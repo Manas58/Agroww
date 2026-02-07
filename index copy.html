@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Prediction</title>
+</head>
+<body>
+    <form id="predictionForm">
+        <label for="temperature">Temperature:</label>
+        <input type="number" id="temperature" name="temperature" required>
+        <br><br>
+        <label for="humidity">Humidity:</label>
+        <input type="number" id="humidity" name="humidity" required>
+        <br><br>
+        <label for="moisture">Soil Moisture:</label>
+        <input type="number" id="moisture" name="moisture" required>
+        <br><br>
+        <label for="soilType">Soil Type:</label>
+        <select id="soilType" name="soilType">
+            <option value="black">Black</option>
+            <option value="clayey">Clayey</option>
+            <option value="loamy">Loamy</option>
+            <option value="red">Red</option>
+            <option value="sandy">Sandy</option>
+        </select>
+        <br><br>
+        <label for="cropType">Crop Type:</label>
+        <select id="cropType" name="cropType">
+            <option value="barley">Barley</option>
+            <option value="cotton">Cotton</option>
+            <option value="groundNuts">Ground Nuts</option>
+            <option value="maize">Maize</option>
+            <option value="millets">Millets</option>
+            <option value="oilSeeds">Oil Seeds</option>
+            <option value="paddy">Paddy</option>
+            <option value="pulses">Pulses</option>
+            <option value="sugarcane">Sugarcane</option>
+            <option value="tobacco">Tobacco</option>
+            <option value="wheat">Wheat</option>
+        </select>
+        <br><br>
+        <label for="nitrogen">Nitrogen:</label>
+        <input type="number" id="nitrogen" name="nitrogen" required>
+        <br><br>
+        <label for="potassium">Potassium:</label>
+        <input type="number" id="potassium" name="potassium" required>
+        <br><br>
+        <label for="phosphorous">Phosphorous:</label>
+        <input type="number" id="phosphorous" name="phosphorous" required>
+        <br><br>
+        <button type="button" onclick="predict()">Explore</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        function predict() {
+            const formData = {
+                temperature: document.getElementById("temperature").value,
+                humidity: document.getElementById("humidity").value,
+                moisture: document.getElementById("moisture").value,
+                soilType: document.getElementById("soilType").value,
+                cropType: document.getElementById("cropType").value,
+                nitrogen: document.getElementById("nitrogen").value,
+                potassium: document.getElementById("potassium").value,
+                phosphorous: document.getElementById("phosphorous").value
+            };
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById("result");
+                if (data.success) {
+                    resultDiv.innerText = `Predicted Fertilizer: ${data.fertilizer}`;
+                } else {
+                    resultDiv.innerText = `Error: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Groq API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 200px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            text-align: left;
+            width: 300px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Chatbot Interface</h1>
+    <form id="chatForm">
+        <label for="userMessage">Enter Message:</label>
+        <input type="text" id="userMessage" name="userMessage" placeholder="Type a message..." required>
+        <input type="submit" value="Send">
+    </form>
+
+    <div id="result">
+        <h3>Chatbot Response:</h3>
+        <div id="chatResponse">Your response will appear here.</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('chatForm');
+        const chatResponseDiv = document.getElementById('chatResponse');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userMessage = document.getElementById('userMessage').value;
+            getChatResponse(userMessage);
+        });
+
+        async function getChatResponse(message) {
+            const apiKey = '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'; // Replace with your actual API key
+            const url = 'https://api.groq.com/openai/v1/chat/completions';  // API endpoint
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        prompt: message,
+                        model: "llama3-8b-8192",
+                        max_tokens: 100
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to retrieve chatbot response');
+                }
+
+                const data = await response.json();
+                const botMessage = data.choices[0].message.content;
+
+                // Display chatbot response
+                chatResponseDiv.textContent = botMessage;
+
+            } catch (error) {
+                alert(error.message);
+                chatResponseDiv.textContent = "Sorry, there was an error processing your request.";
+            }
+        }
+    </script>
+
+</body>
+</html>

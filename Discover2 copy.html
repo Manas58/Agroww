@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Prediction Form</title>
+    <link rel="stylesheet" href="assets/css/style_disc.css">
+</head>
+<body>
+    <div class="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="toggleTheme">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="form-container">
+        <img src="assets/img/logo.jpg" alt="Agroww Logo" class="logo">
+        
+        <div class="form-content">
+            <h2>Sign In for Fertilizer Prediction</h2>
+            <form id="weatherForm">
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="Enter your city" required>
+                        <button type="button" onclick="getWeather()">Get Weather</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="temperature">Temperature (°C)</label>
+                        <input type="number" id="temperature" name="temperature" placeholder="Enter temperature" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="humidity">Humidity (%)</label>
+                        <input type="number" id="humidity" name="humidity" placeholder="Enter humidity" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="soil-type">Soil Type</label>
+                        <select id="soil-type" name="soilType" required> <!-- Changed to soilType -->
+                            <option value="">Select Soil Type</option>
+                            <option value="black">Black</option>
+                            <option value="clayey">Clayey</option>
+                            <option value="loamy">Loamy</option>
+                            <option value="red">Red</option>
+                            <option value="sandy">Sandy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="crop-type">Crop Type</label>
+                        <select id="crop-type" name="cropType" required> <!-- Changed to cropType -->
+                            <option value="">Select Crop Type</option>
+                            <option value="barley">Barley</option>
+                            <option value="cotton">Cotton</option>
+                            <option value="groundNuts">Ground Nuts</option>
+                            <option value="maize">Maize</option>
+                            <option value="millets">Millets</option>
+                            <option value="oilSeeds">Oil Seeds</option>
+                            <option value="paddy">Paddy</option>
+                            <option value="pulses">Pulses</option>
+                            <option value="sugarcane">Sugarcane</option>
+                            <option value="tobacco">Tobacco</option>
+                            <option value="wheat">Wheat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nitrogen">Nitrogen (%)</label>
+                        <input type="number" id="nitrogen" name="nitrogen" placeholder="Enter nitrogen level" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="potassium">Potassium (%)</label>
+                        <input type="number" id="potassium" name="potassium" placeholder="Enter potassium level" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phosphorous">Phosphorous (%)</label>
+                        <input type="number" id="phosphorous" name="phosphorous" placeholder="Enter phosphorous level" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="predict-weather-btn">Predict Fertilizers</button>
+                    <button type="button" class="back-btn" onclick="history.back()">Go Back</button>
+                </div>
+                <div id="result" class="result-card hidden">
+                    <h2><i class="fas fa-bullseye icon"></i> Prediction Result</h2>
+                    <p><strong>Recommended Fertilizer:</strong> <span id="recommendedFertilizer"></span></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const toggleThemeButton = document.getElementById('toggleTheme');
+        const body = document.body;
+
+        toggleThemeButton.addEventListener('change', () => {
+            body.classList.toggle('dark-mode');
+        });
+
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            const apiKey = 'fdfad914d777f9b0a23e4dac14748801';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('City not found');
+
+                const data = await response.json();
+                document.getElementById('temperature').value = data.main.temp;
+                document.getElementById('humidity').value = data.main.humidity;
+
+            } catch (error) {
+                alert(error.message);
+                document.getElementById('temperature').value = '';
+                document.getElementById('humidity').value = '';
+            }
+        }
+
+        async function predictFertilizer() {
+            try {
+                const temp = parseFloat(document.getElementById('temperature').value);
+                const humi = parseFloat(document.getElementById('humidity').value);
+                const soil = document.getElementById('soil-type').value.toLowerCase();
+                const crop = document.getElementById('crop-type').value.toLowerCase();
+                const nitro = parseFloat(document.getElementById('nitrogen').value);
+                const pota = parseFloat(document.getElementById('potassium').value);
+                const phosp = parseFloat(document.getElementById('phosphorous').value);
+
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ temperature: temp, humidity: humi, soilType: soil, cropType: crop, nitrogen: nitro, potassium: pota, phosphorous: phosp })
+                });
+
+                if (!response.ok) throw new Error('Prediction failed');
+
+                const data = await response.json();
+                document.getElementById('recommendedFertilizer').textContent = data.fertilizer;
+                document.getElementById('result').classList.remove('hidden');
+
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        document.getElementById('weatherForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            predictFertilizer();
+        });
+    </script>
+</body>
+</html>
